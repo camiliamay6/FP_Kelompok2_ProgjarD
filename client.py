@@ -19,16 +19,17 @@ class Window(Tk):
 
         self.frames = {}
         
-        for F in (CreateRoom_frame, JoinRoom_frame):
+        for F in (CreateRoom_frame, JoinRoom_frame, Main_Menu):
             frame = F(container, self)
             self.frames[F]=frame
             frame.grid(row=0, column=0, sticky="nsew")
         self.show_frame(Main_Menu)
+        
     def show_frame(self, cont):
-
         frame = self.frames[cont]
         frame.tkraise()
-#Buat halaman Main Meny
+        
+#Buat halaman Main Menu
 class Main_Menu(Frame):
      def __init__(self, parent, controller):
         Frame.__init__(self, parent)
@@ -38,7 +39,7 @@ class Main_Menu(Frame):
         b_new_room = Button(self, text="Create New Room", command=lambda: controller.show_frame(CreateRoom_frame))
         b_new_room.pack()
             
-        b_join_room = Button(self, tect="Join room", command=lambda: controller.show_frame(JoinRoom_frame))
+        b_join_room = Button(self, text="Join room", command=lambda: controller.show_frame(JoinRoom_frame))
         b_join_room.pack()        
     #Buat room baru
 class CreateRoom_frame(Frame):
@@ -52,7 +53,7 @@ class CreateRoom_frame(Frame):
             
         b_join_room = Button(self, text="Join room", command=lambda: controller.show_frame(JoinRoom_frame))
         b_join_room.pack()
- #Menu utama
+#Menu Join
 class JoinRoom_frame(Frame):
     def __init__(self, parent, controller):
         Frame.__init__(self, parent)
@@ -67,6 +68,7 @@ class JoinRoom_frame(Frame):
         
         
 app = Window()
+app.geometry("400x300")
 app.mainloop()
 
 
@@ -76,7 +78,6 @@ port = 8081
 server.connect((ip_address, port))
 sockets_list =  []
 #main program
-root.mainloop()
 
 while True:
     sockets_list = [server]
