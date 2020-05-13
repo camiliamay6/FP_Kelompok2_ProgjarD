@@ -6,21 +6,23 @@ import msvcrt
 from ftplib import FTP
 from tkinter import *
 
-class Window(Frame):
-    def __init__(self, master=None):
-        Frame.__init__(self, master)               
-        self.master = master
+class Window(Tk):
+    def __init__(self, *args, **kwargs):
+        Tk.__init__(self, *args, **kwargs)               
+       
+        container = Frame(self)
+
+        container.pack(side="top", fill="both", expand = True)
+
+        container.grid_rowconfigure(0, weight=1)
+        container.grid_columnconfigure(0, weight=1)
+
         self.frames = {}
         
-        pagelist.Frame(self)
-        pagelist.pack(side="top", fill="both", expand=True)
-        pagelist.grid_rowconfigure(0, weight=1)
-        pagelist.grid_columnconfigure(o, weight=1)
-        
-        for f in (CreateRoom_frame, JoinRoom_frame):
-            frame = F(pagelist, self)
+        for F in (CreateRoom_frame, JoinRoom_frame):
+            frame = F(container, self)
             self.frames[F]=frame
-            frame.grid(row=0, colmn=0, sticky="nsew")
+            frame.grid(row=0, column=0, sticky="nsew")
         self.show_frame(Main_Menu)
     def show_frame(self, cont):
 
@@ -48,7 +50,7 @@ class CreateRoom_frame(Frame):
         b_new_room = Button(self, text="Create New Room", command=lambda: controller.show_frame(CreateRoom_frame))
         b_new_room.pack()
             
-        b_join_room = Button(self, tect="Join room", command=lambda: controller.show_frame(JoinRoom_frame))
+        b_join_room = Button(self, text="Join room", command=lambda: controller.show_frame(JoinRoom_frame))
         b_join_room.pack()
  #Menu utama
 class JoinRoom_frame(Frame):
@@ -60,13 +62,12 @@ class JoinRoom_frame(Frame):
         b_new_room = Button(self, text="Create New Room", command=lambda: controller.show_frame(CreateRoom_frame))
         b_new_room.pack()
             
-        b_join_room = Button(self, tect="Join room", command=lambda: controller.show_frame(JoinRoom_frame))
+        b_join_room = Button(self, text="Join room", command=lambda: controller.show_frame(JoinRoom_frame))
         b_join_room.pack()
         
         
-root = Tk()
-root.geometry("500x500")
-app = Window(root)
+app = Window()
+app.mainloop()
 
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
