@@ -11,7 +11,7 @@ server.bind((ip_address,port))
 server.listen(100)
 list_of_clients = []
 
-room_id = {'123':[]}        #dict id room dengan conn playernya
+room_id = {}        #dict id room dengan conn playernya
 usernamelist= {'123':[]}    #dict id room dengan usernamenya
 user_username = {}          #dict conn dengan usernamenya
 room_key=''
@@ -20,19 +20,28 @@ def clientthread(conn, addr):
     while True:
         try:
             message = conn.recv(2048).decode()
-            
+            print("message: " + str(message))
             #LISGRUP = matriks yang berisi data id_room, client_addressnya, username, dan role.
             
             #IF dipesannya ada value Create???????:
                 #buat id room baru append ke matriks LISTGRUP
                 #append addressnya ke matriks
-                
-            if 'JOIN' in message:
+            if 'CREATE' in message:
+              id_room = message.split(' ')[1]
+              print("id_room: " + str(id_room))
+              room_id.update({str(id_room):''})
+              print("Room_id dict: " + str(room_id.keys()))
+              response_message = "Room " + str(id_room) + " berhasil dibuat"
+              for client in list_of_clients:
+                  client.send(response_message.encode())
+              
+
+            elif 'JOIN' in message:
                 N = 2
                 res = message.split(' ')[N-1] 
                 print(res)
                 if res in room_id:
-                    room_id[res].append(conn)
+                    room_id.update({res:conn})
                     print("ada roomnya", room_id[res])
                     for clients in list_of_clients:
                         print(clients, conn)
@@ -56,7 +65,7 @@ def clientthread(conn, addr):
                 res = message.split(' ')[N-1] 
                 key = list(room_id.keys())
                 valuess = list(room_id.values())
-                print(conn)
+                # print(conn)
                 print(valuess)
                 isi = range(len(valuess))
                 print(isi)
@@ -74,7 +83,8 @@ def clientthread(conn, addr):
                 print(status)
                 if status==1:
                     print("check")
-                    user_username[res] = str(conn)
+                    user_username.update({res:str(conn)})
+                    # user_username[res] = str(conn)
                     print("tidak ada uname", addr)
                     for clients in list_of_clients:
                         print(clients, conn)
@@ -104,9 +114,9 @@ def clientthread(conn, addr):
                     #send ke id room kalau kata udah ada
                     
             if message:
-                print('<'+addr[0]+'>' + str(message))
-                print (room_id)
-                print (room_key)
+                # print('<'+addr[0]+'>' + str(message))
+                # print (room_id)
+                # print (room_key)
                 message_to_send = '<' + addr[0] + '>' + str(message)
                 broadcast(message_to_send, conn)
             else:

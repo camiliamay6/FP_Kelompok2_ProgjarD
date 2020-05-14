@@ -11,7 +11,7 @@ from tkinter.ttk import *
 
 #konfigurasi dengan server
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-server.settimeout(5)
+server.settimeout(10)
 ip_address = '127.0.0.1'
 port = 8081
 server.connect((ip_address, port))
@@ -48,17 +48,27 @@ class Window(Tk):
 
         server.send(create_message.encode())
         create_response_message = server.recv(1024).decode()
-        sys.stdout.write(create_response_message)
-        if create_response_message == 'Room '+ id_room + 'berhasil dibuat':
-            join_message = username +" JOIN " + id_room
-            server.send(join_message.encode())
-            join_response_message = server.recv(1024).decode()
-            if join_response_message == username + ' joined':
-                join = 1
-                frame = self.frames[PlayMode_frame]
-                frame.tkraise()
-
-
+        print(create_response_message)
+        if 'berhasil' in create_response_message:
+           print("Server: " + create_response_message)
+           sent_message = "JOIN " + id_room
+           server.send(sent_message.encode())
+           message = server.recv(1024).decode()
+           if message == 'berhasil':
+               frame = self.frames[PlayMode_frame]
+               frame.tkraise()
+           else: 
+               frame = self.frames[NotFound_frame]
+               frame.tkraise()
+        #    frame = self.frames[JoinRoom_frame]
+        #    frame.tkraise()
+            # join_message = username +" JOIN " + id_room
+            # server.send(join_message.encode())
+            # join_response_message = server.recv(1024).decode()
+            # if join_response_message == username + ' joined':
+            #     join = 1
+            #     frame = self.frames[PlayMode_frame]
+            #     frame.tkraise()
 
 
     #fungsi join
@@ -76,6 +86,7 @@ class Window(Tk):
             frame = self.frames[NotFound_frame]
             frame.tkraise()
 
+    
     #fungsi enter username
     def Uname_msg(self, konten):
         uname_id = "UNAME " + konten
@@ -134,7 +145,7 @@ class CreateRoom_frame(Frame):
 
         label_name = Label(self, text="Masukkan Username anda")
         label_name.pack(pady=10,padx=10)
-        #harus dapet nomor roomnya, sementara asal dulu ya
+        # #harus dapet nomor roomnya, sementara asal dulu ya
         username = Entry(self)
         username.pack(pady=15,padx=15)   
 
@@ -188,7 +199,7 @@ class PlayMode_frame(Frame):
         
         
 app = Window()
-app.geometry("400x300")
+app.geometry("500x500")
 app.mainloop()
 
 while True:
