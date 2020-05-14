@@ -6,12 +6,21 @@ import msvcrt
 from ftplib import FTP
 from tkinter import *
 
+#konfigurasi dengan server
+server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server.settimeout(5)
+ip_address = '127.0.0.1'
+port = 8081
+server.connect((ip_address, port))
+sockets_list =  []
+join = 0
+
 class Window(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)               
        
         container = Frame(self)
-
+        user_input= StringVar()
         container.pack(side="top", fill="both", expand = True)
 
         container.grid_rowconfigure(0, weight=1)
@@ -24,10 +33,27 @@ class Window(Tk):
             self.frames[F]=frame
             frame.grid(row=0, column=0, sticky="nsew")
         self.show_frame(Main_Menu)
-        
+    #show frame    
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
+    #fungsi join
+    def Join_msg(msg, konten):
+        #dari entry ambil valuenya
+        join_id = "JOIN " + konten
+        
+        print("hupla")
+        print(konten)
+        server.send(join_id.encode())
+        message = server.recv(1024).decode()
+        sys.stdout.write(message)
+        if message == 'berhasil':
+            controller.show_frame(EnterUserName_frame)
+            join==1
+        else:
+            print("room tidak ditemukan")
+
+        print("hupla")
         
 #Buat halaman Main Menu
 class Main_Menu(Frame):
@@ -48,8 +74,10 @@ class CreateRoom_frame(Frame):
         Frame.__init__(self, parent)
         b_mainmenu = Button(self, text="Back", command=lambda: controller.show_frame(Main_Menu))
         b_mainmenu.pack(pady=15, padx=15)
+        
         label = Label(self, text="Berikut id Room anda")
         label.pack(pady=10,padx=10)
+        
         #harus dapet nomor roomnya, sementara asal dulu ya
         Room_number= Label(self, text="78h8bg")
         Room_number.pack(pady=15,padx=15)        
@@ -62,12 +90,18 @@ class JoinRoom_frame(Frame):
         Frame.__init__(self, parent)
         b_mainmenu = Button(self, text="Back", command=lambda: controller.show_frame(Main_Menu))
         b_mainmenu.pack(pady=15, padx=15)
+        
         label = Label(self, text="Masukan id Ruangan")
         label.pack(pady=10,padx=10)
-        room_number_input=Entry(self, text="masukan id ruangan", bd=5)
+        
+        room_number_input=Entry(self, bd=5)
         room_number_input.pack()
-        b_join_room = Button(self, text="Next", command=lambda: controller.show_frame(EnterUserName_frame))
+        
+        b_join_room = Button(self, text="Next", command=lambda: controller.Join_msg(room_number_input.get()))
         b_join_room.pack()
+        if(join==1):
+            controller.show_frame(EnterUserName_frame)
+       
         
 #Menu masuan Username
 class EnterUserName_frame(Frame):
@@ -93,14 +127,6 @@ app = Window()
 app.geometry("400x300")
 app.mainloop()
 
-
-server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-ip_address = '127.0.0.1'
-port = 8081
-server.connect((ip_address, port))
-sockets_list =  []
-#main program
-
 while True:
     sockets_list = [server]
     read_socket = select.select(sockets_list, [],[], 3)[0]
@@ -116,39 +142,10 @@ while True:
             
         else:
             message = sys.stdin.readline()
-
-            if message == "LIST\n":
-                print('current working directory' + f.pwd())
-                names = f.dir()
-                print('list of directory : ' +str(names))
-        
-            elif message == "PWD\n":
-                print('Folder sekarang' + f.pwd())
-                
-            elif message == "CD\n":
-                dirname = str(raw_input("Masukan nama folder tujuan: "))
-                f.cwd(dirname)
-        
-            elif message =="MKDIR\n":
-                dirname = str(raw_input("Masukan nama folder : "))
-                f.mkd(dirname)
-                file = []
-                f.retrlines('LIST', file.append)
-                for f1 in file:
-                    print(f1) 
-                    
-            elif message == "SENDALL\n":
-                print("kodingan sendal\n")
-                
-            elif message == "DOWNZIP\n":
-                print("kodingan downzip\n")
-                
-                    
-            else:            
-                server.send(message.encode())
-                sys.stdout.write('<You>')
-                sys.stdout.write(message)
-                sys.stdout.flush()
+            server.send(message.encode())
+            sys.stdout.write('<You>')
+            sys.stdout.write(message)
+            sys.stdout.flush()
             
 server.close()
             
