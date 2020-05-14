@@ -13,7 +13,7 @@ list_of_clients = []
 
 room_id = {'123':[]}        #dict id room dengan conn playernya
 usernamelist= {'123':[]}    #dict id room dengan usernamenya
-user_username = {}        #array conn dengan usernamenya
+user_username = {}          #dict conn dengan usernamenya
 room_key=''
 LISTGROUP = []
 def clientthread(conn, addr):
@@ -74,8 +74,7 @@ def clientthread(conn, addr):
                 print(status)
                 if status==1:
                     print("check")
-                    user_username[res] = conn
-                    print("uname : " + room_id)
+                    user_username[res] = str(conn)
                     print("tidak ada uname", addr)
                     for clients in list_of_clients:
                         print(clients, conn)
