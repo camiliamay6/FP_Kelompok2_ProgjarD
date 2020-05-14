@@ -15,6 +15,7 @@ room_id = {}        #dict id room dengan conn playernya
 usernamelist= {'123':[]}    #dict id room dengan usernamenya
 user_username = {}          #dict conn dengan usernamenya
 room_key=''
+array_conn = []
 LISTGROUP = []
 def clientthread(conn, addr):
     while True:
@@ -29,7 +30,7 @@ def clientthread(conn, addr):
             if 'CREATE' in message:
               id_room = message.split(' ')[1]
               print("id_room: " + str(id_room))
-              room_id.update({str(id_room):''})
+              room_id.update({str(id_room):array_conn})
               print("Room_id dict: " + str(room_id.keys()))
               response_message = "Room " + str(id_room) + " berhasil dibuat"
               for client in list_of_clients:
@@ -41,7 +42,8 @@ def clientthread(conn, addr):
                 res = message.split(' ')[N-1] 
                 print(res)
                 if res in room_id:
-                    room_id.update({res:list_of_clients})
+                    array_conn.append(conn)
+                    room_id.update({res:array_conn})
                     print("ada roomnya", room_id[res])
                     for clients in list_of_clients:
                         print(clients, conn)

@@ -136,7 +136,7 @@ class CreateRoom_frame(Frame):
         
         label = Label(self, text="Berikut id Room anda")
         label.pack(pady=10,padx=10)
-        #harus dapet nomor roomnya, sementara asal dulu ya
+        
         Room_number = Entry(self)
         Room_number.pack(pady=15,padx=15)   
 
@@ -145,7 +145,7 @@ class CreateRoom_frame(Frame):
 
         label_name = Label(self, text="Masukkan Username anda")
         label_name.pack(pady=10,padx=10)
-        # #harus dapet nomor roomnya, sementara asal dulu ya
+
         username = Entry(self)
         username.pack(pady=15,padx=15)   
 
