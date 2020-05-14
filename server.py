@@ -28,7 +28,7 @@ def clientthread(conn, addr):
                 res = message.split(' ')[N-1] 
                 print(res)
                 if res in room_id:
-                    room_id[res].append(addr)
+                    room_id[res].append(conn)
                     print("ada roomnya", addr)
                     for clients in list_of_clients:
                         print(clients, conn)
@@ -45,7 +45,8 @@ def clientthread(conn, addr):
                 else:
                     print("room belum dibuat", addr)
                     conn.send("nah").encode()
-                    
+            
+                            
             #IF dipesannya ada kata username:
                 #cek ada dimana address ini
                 #masukin ke matriks LISTGRUP nx4 (isinya room, address, username, role)
