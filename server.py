@@ -37,7 +37,7 @@ def clientthread(conn, addr):
                 response_message = "berhasil"
 
                 stat = conn.send(response_message.encode())
-                if stat ==1:
+                if stat <0:
                     print("berhasil")                 
                 else:
                     print('gagal')
