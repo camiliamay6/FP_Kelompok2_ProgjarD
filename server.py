@@ -41,7 +41,7 @@ def clientthread(conn, addr):
                 res = message.split(' ')[N-1] 
                 print(res)
                 if res in room_id:
-                    room_id.update({res:conn})
+                    room_id.update({res:list_of_clients})
                     print("ada roomnya", room_id[res])
                     for clients in list_of_clients:
                         print(clients, conn)
