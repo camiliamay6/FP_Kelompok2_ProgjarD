@@ -41,7 +41,25 @@ class Window(Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
-        
+
+    def create_msg(self, id_room, username):
+        create_message = "CREATE " + id_room
+
+        server.send(create_message.encode())
+        create_response_message = server.recv(1024).decode()
+        sys.stdout.write(create_response_message)
+        if create_response_message == 'Room '+ id_room + 'berhasil dibuat':
+            join_message = username +" JOIN " + id_room
+            server.send(join_message.encode())
+            join_response_message = server.recv(1024).decode()
+            if join_response_message == username + ' joined':
+                join = 1
+                frame = self.frames[PlayMode_frame]
+                frame.tkraise()
+
+
+
+
     #fungsi join
     def Join_msg(self, konten):
         #dari entry ambil valuenya
@@ -99,8 +117,14 @@ class CreateRoom_frame(Frame):
         b_generate = Button(self, text="Generate", command=lambda: controller.generateKode(Room_number))
         b_generate.pack(pady=15, padx=15)   
 
-        b_enter = Button(self, text="Next", command=lambda: controller.show_frame(EnterUserName_frame))
-        b_enter.pack(pady=15, padx=15)
+        label_name = Label(self, text="Masukkan Username anda")
+        label_name.pack(pady=10,padx=10)
+        #harus dapet nomor roomnya, sementara asal dulu ya
+        username = Entry(self)
+        username.pack(pady=15,padx=15)   
+
+        b_create = Button(self, text="Create", command=lambda: controller.create_msg(Room_number.get(), username.get()))
+        b_create.pack(pady=15, padx=15)
         
 #Menu Join
 class JoinRoom_frame(Frame):

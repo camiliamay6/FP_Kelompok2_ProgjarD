@@ -45,8 +45,8 @@ def clientthread(conn, addr):
                 else:
                     print("room belum dibuat", addr)
                     conn.send("nah").encode()
-            
-                            
+            elif 'CREATE' in message:
+                print(message)                 
             #IF dipesannya ada kata username:
                 #cek ada dimana address ini
                 #masukin ke matriks LISTGRUP nx4 (isinya room, address, username, role)
