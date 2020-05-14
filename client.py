@@ -17,6 +17,7 @@ port = 8081
 server.connect((ip_address, port))
 sockets_list =  []
 join = 0
+uname = 0
 
 class Window(Tk):
     def __init__(self, *args, **kwargs):
@@ -50,14 +51,28 @@ class Window(Tk):
         print(konten)
         server.send(join_id.encode())
         message = server.recv(1024).decode()
-        sys.stdout.write(message)
         if message == 'berhasil':
-            join==1
             frame = self.frames[EnterUserName_frame]
             frame.tkraise()
         else:
             frame = self.frames[NotFound_frame]
             frame.tkraise()
+
+    #fungsi enter username
+    def Uname_msg(self, konten):
+        uname_id = "UNAME " + konten
+
+        print(konten)
+        server.send(uname_id.encode())
+        print("ngirim ke server...")
+        message = server.recv(1024).decode()
+        if message == 'berhasil':
+            frame = self.frames[PlayMode_frame]
+            frame.tkraise()
+        else:
+            frame = self.frames[NotFound_frame]
+            frame.tkraise()
+
 
     # generate random string
     def randomKey(self, entry):
@@ -117,8 +132,6 @@ class JoinRoom_frame(Frame):
         
         b_join_room = Button(self, text="Next", command=lambda: controller.Join_msg(room_number_input.get()))
         b_join_room.pack()
-        if(join==1):
-            controller.show_frame(EnterUserName_frame)
        
         
 #Menu masuan Username
@@ -127,11 +140,14 @@ class EnterUserName_frame(Frame):
         Frame.__init__(self, parent)
         b_mainmenu = Button(self, text="Back", command=lambda: controller.show_frame(Main_Menu))
         b_mainmenu.pack(pady=15, padx=15)
+
         label = Label(self, text="Masukan Username")
         label.pack(pady=10,padx=10)
+
         username_input=Entry(self, text="masukan username")
         username_input.pack()
-        b_start = Button(self, text="Enter", command=lambda: controller.show_frame(PlayMode_frame))
+
+        b_start = Button(self, text="Enter", command=lambda: controller.Uname_msg(username_input.get()))
         b_start.pack()
 
 class NotFound_frame(Frame):
