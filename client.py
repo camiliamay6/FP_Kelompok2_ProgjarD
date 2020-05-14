@@ -44,22 +44,19 @@ class Window(Tk):
         frame.tkraise()
 
     def create_msg(self, id_room, username):
-        create_message = "CREATE " + id_room
+        create_message = "CREATE " + id_room + ' ' + username
 
         server.send(create_message.encode())
-        create_response_message = server.recv(1024).decode()
-        print(create_response_message)
-        if 'berhasil' in create_response_message:
-           print("Server: " + create_response_message)
-           sent_message = "JOIN " + id_room
-           server.send(sent_message.encode())
-           message = server.recv(1024).decode()
-           if message == 'berhasil':
-               frame = self.frames[PlayMode_frame]
-               frame.tkraise()
-           else: 
-               frame = self.frames[NotFound_frame]
-               frame.tkraise()
+        message = server.recv(1024).decode()
+        print(message)
+        if message == 'berhasil':
+            print('berhasil')
+            frame = self.frames[PlayMode_frame]
+            frame.tkraise()
+        else: 
+            frame = self.frames[NotFound_frame]
+            frame.tkraise()
+            
         #    frame = self.frames[JoinRoom_frame]
         #    frame.tkraise()
             # join_message = username +" JOIN " + id_room
@@ -202,25 +199,25 @@ app = Window()
 app.geometry("500x500")
 app.mainloop()
 
-while True:
-    sockets_list = [server]
-    read_socket = select.select(sockets_list, [],[], 3)[0]
+#while True:
+#    sockets_list = [server]
+#    read_socket = select.select(sockets_list, [],[], 3)[0]
     
-    if msvcrt.kbhit():
-        read_socket.append(sys.stdin)
+#    if msvcrt.kbhit():
+#        read_socket.append(sys.stdin)
     
-    for socks in read_socket:
-        if socks == server:
-            message = socks.recv(2048).decode()
-            sys.stdout.write(message)
+ #   for socks in read_socket:
+#        if socks == server:
+#            message = socks.recv(2048).decode()
+#            sys.stdout.write(message)
                  
-            
-        else:
-            message = sys.stdin.readline()
-            server.send(message.encode())
-            sys.stdout.write('<You>')
-            sys.stdout.write(message)
-            sys.stdout.flush()
+ #           
+ #       else:
+ #           message = sys.stdin.readline()
+ #           server.send(message.encode())
+ #           sys.stdout.write('<You>')
+#            sys.stdout.write(message)
+#            sys.stdout.flush()
             
 server.close()
             
