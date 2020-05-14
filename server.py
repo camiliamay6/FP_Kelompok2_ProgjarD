@@ -10,7 +10,10 @@ port = 8081
 server.bind((ip_address,port))
 server.listen(100)
 list_of_clients = []
-room_id = {'123':[]}
+
+room_id = {'123':[]}        #dict id room dengan conn playernya
+usernamelist= {'123':[]}    #dict id room dengan usernamenya
+user_username = {}        #array conn dengan usernamenya
 room_key=''
 LISTGROUP = []
 def clientthread(conn, addr):
@@ -29,9 +32,8 @@ def clientthread(conn, addr):
                 res = message.split(' ')[N-1] 
                 print(res)
                 if res in room_id:
-                    room_key = res
                     room_id[res].append(conn)
-                    print("ada roomnya", addr)
+                    print("ada roomnya", room_id[res])
                     for clients in list_of_clients:
                         print(clients, conn)
                         if clients == conn:
@@ -41,9 +43,9 @@ def clientthread(conn, addr):
                                 clients.send(berhasil.encode())
                                 print("dikirim")
                             except:
-                                    clients.close()
-                                    print("gagal mengirim")
-                                    remove(clients)
+                                clients.close()
+                                print("gagal mengirim")
+                                remove(clients)
                 else:
                     print("room belum dibuat", addr)
                     conn.send("nah").encode()
@@ -52,16 +54,27 @@ def clientthread(conn, addr):
                 print("MASOKKK")
                 N = 2
                 res = message.split(' ')[N-1] 
-                print(res)
-                for conn in room_id[room_key]:
-                    if res not in room_id[room_key][conn]:
-                        status = 1
-                    else:
-                        status = 0
+                key = list(room_id.keys())
+                valuess = list(room_id.values())
+                print(conn)
+                print(valuess)
+                isi = range(len(valuess))
+                print(isi)
+                #cek room
+                for i in isi:
+                    if conn in valuess[i]:
+                        room_key = key[i]
+                #cek sudah dipakai atau belum
+                key = list(user_username.keys())
+                if res not in key:
+                    status =1
+                else:
+                    status = 0
 
                 print(status)
                 if status==1:
-                    room_id[room_key][conn].append(res)
+                    print("check")
+                    user_username[res] = conn
                     print("uname : " + room_id)
                     print("tidak ada uname", addr)
                     for clients in list_of_clients:
@@ -73,9 +86,9 @@ def clientthread(conn, addr):
                                 clients.send(berhasil.encode())
                                 print("dikirim")
                             except:
-                                    clients.close()
-                                    print("gagal mengirim")
-                                    remove(clients)
+                                clients.close()
+                                print("gagal mengirim")
+                                remove(clients)
                 else:
                     print("uname dah ada", addr)
                     conn.send("nah").encode()
