@@ -10,16 +10,19 @@ port = 8081
 server.bind((ip_address,port))
 server.listen(100)
 list_of_clients = []
-room_id={'123':['78987283']}
+room_id = {'123':['78987283']}
 LISTGROUP = []
 def clientthread(conn, addr):
     while True:
         try:
             message = conn.recv(2048).decode()
+            
             #LISGRUP = matriks yang berisi data id_room, client_addressnya, username, dan role.
-             #kalau dipesannya ada value Create???????:
+            
+            #IF dipesannya ada value Create???????:
                 #buat id room baru append ke matriks LISTGRUP
                 #append addressnya ke matriks
+                
             if 'JOIN' in message:
                 N = 2
                 res = message.split(' ')[N-1] 
@@ -32,7 +35,8 @@ def clientthread(conn, addr):
                         if clients == conn:
                             try:
                                 print("dikirim")
-                                clients.send("berhasil").encode()#!!!!Masih belum bisa ngirim
+                                berhasil = "berhasil"
+                                clients.send(berhasil.encode())#!!!!Masih belum bisa ngirim
                                 print("dikirim")
                             except:
                                     clients.close()
@@ -42,8 +46,7 @@ def clientthread(conn, addr):
                     print("room belum dibuat", addr)
                     conn.send("nah").encode()
                     
-                #kalau gak ada????????????????
-            #kalau dipesannya ada kata username:
+            #IF dipesannya ada kata username:
                 #cek ada dimana address ini
                 #masukin ke matriks LISTGRUP nx4 (isinya room, address, username, role)
                 

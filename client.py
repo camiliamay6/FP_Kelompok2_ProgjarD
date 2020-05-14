@@ -37,23 +37,22 @@ class Window(Tk):
     def show_frame(self, cont):
         frame = self.frames[cont]
         frame.tkraise()
+        
     #fungsi join
-    def Join_msg(msg, konten):
+    def Join_msg(self, konten):
         #dari entry ambil valuenya
         join_id = "JOIN " + konten
         
-        print("hupla")
         print(konten)
         server.send(join_id.encode())
         message = server.recv(1024).decode()
         sys.stdout.write(message)
         if message == 'berhasil':
-            controller.show_frame(EnterUserName_frame)
             join==1
+            frame = self.frames[EnterUserName_frame]
+            frame.tkraise()
         else:
             print("room tidak ditemukan")
-
-        print("hupla")
         
 #Buat halaman Main Menu
 class Main_Menu(Frame):
