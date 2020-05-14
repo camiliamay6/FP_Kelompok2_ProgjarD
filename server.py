@@ -10,7 +10,8 @@ port = 8081
 server.bind((ip_address,port))
 server.listen(100)
 list_of_clients = []
-room_id = {'123':['78987283']}
+room_id = {'123':[]}
+room_key=''
 LISTGROUP = []
 def clientthread(conn, addr):
     while True:
@@ -28,6 +29,7 @@ def clientthread(conn, addr):
                 res = message.split(' ')[N-1] 
                 print(res)
                 if res in room_id:
+                    room_key = res
                     room_id[res].append(conn)
                     print("ada roomnya", addr)
                     for clients in list_of_clients:
@@ -36,7 +38,7 @@ def clientthread(conn, addr):
                             try:
                                 print("dikirim")
                                 berhasil = "berhasil"
-                                clients.send(berhasil.encode())#!!!!Masih belum bisa ngirim
+                                clients.send(berhasil.encode())
                                 print("dikirim")
                             except:
                                     clients.close()
@@ -45,8 +47,40 @@ def clientthread(conn, addr):
                 else:
                     print("room belum dibuat", addr)
                     conn.send("nah").encode()
-            elif 'CREATE' in message:
-                print(message)                 
+
+            elif 'UNAME' in message:
+                print("MASOKKK")
+                N = 2
+                res = message.split(' ')[N-1] 
+                print(res)
+                for conn in room_id[room_key]:
+                    if res not in room_id[room_key][conn]:
+                        status = 1
+                    else:
+                        status = 0
+
+                print(status)
+                if status==1:
+                    room_id[room_key][conn].append(res)
+                    print("uname : " + room_id)
+                    print("tidak ada uname", addr)
+                    for clients in list_of_clients:
+                        print(clients, conn)
+                        if clients == conn:
+                            try:
+                                print("dikirim")
+                                berhasil = "berhasil"
+                                clients.send(berhasil.encode())
+                                print("dikirim")
+                            except:
+                                    clients.close()
+                                    print("gagal mengirim")
+                                    remove(clients)
+                else:
+                    print("uname dah ada", addr)
+                    conn.send("nah").encode()
+            
+                            
             #IF dipesannya ada kata username:
                 #cek ada dimana address ini
                 #masukin ke matriks LISTGRUP nx4 (isinya room, address, username, role)
@@ -59,10 +93,12 @@ def clientthread(conn, addr):
                     
             if message:
                 print('<'+addr[0]+'>' + str(message))
+                print (room_id)
+                print (room_key)
                 message_to_send = '<' + addr[0] + '>' + str(message)
                 broadcast(message_to_send, conn)
             else:
-                remove(conn)
+                continue
         except:
             continue
 
