@@ -111,6 +111,11 @@ def clientthread(conn, addr):
                     print("uname dah ada", addr)
                     conn.send("nah").encode()
             
+            elif 'KIRIMCHAT' in message:
+                N = 2
+                kiriman = message.split('////')[N-1] 
+                print(kiriman)
+                broadcast(kiriman,conn)
                             
             #IF dipesannya ada kata username:
                 #cek ada dimana address ini
@@ -135,12 +140,7 @@ def clientthread(conn, addr):
 
 def broadcast(message, connection):
     for clients in list_of_clients:
-        if clients != connection:
-            try:
-                clients.send(message).encode()
-            except:
-                clients.close()
-                remove(clients)
+        clients.send(message).encode()
 
 def remove(connection):
     if connection in list_of_clients:

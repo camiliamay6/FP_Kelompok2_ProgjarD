@@ -4,6 +4,8 @@ import sys
 import msvcrt
 import string
 import random
+#thread
+from threading import Thread
 #FTP
 from ftplib import FTP
 from tkinter import *
@@ -18,6 +20,7 @@ server.connect((ip_address, port))
 sockets_list =  []
 join = 0
 uname = 0
+namaclient = "default"
 
 class Window(Tk):
     def __init__(self, *args, **kwargs):
@@ -45,6 +48,9 @@ class Window(Tk):
 
     def create_msg(self, id_room, username):
         create_message = "CREATE " + id_room + ' ' + username
+        print(username)
+        global namaclient
+        namaclient = username
 
         server.send(create_message.encode())
         message = server.recv(1024).decode()
@@ -89,6 +95,8 @@ class Window(Tk):
         uname_id = "UNAME " + konten
 
         print(konten)
+        global namaclient 
+        namaclient = konten
         server.send(uname_id.encode())
         print("ngirim ke server...")
         message = server.recv(1024).decode()
@@ -110,6 +118,25 @@ class Window(Tk):
     def generateKode(self, entry): 
         password1 = self.randomKey(entry) 
         entry.insert(10, password1) 
+    
+    # receive message dari server
+    def receive(self, entry):
+        while True:
+            try:
+                msg = server.recv(1024).decode()
+                print(str(msg))
+                entry.insert(END, msg)
+            except OSError:  # Possibly client has left the chat.
+                break
+
+    # send message ke chat
+    def send(self,entry,entry2 , msg):
+        msgchat = "KIRIMCHAT"+"////" + namaclient + ": " + msg
+        msgchat2 = namaclient + ": " + msg
+        print(msgchat)
+        entry.insert(END, msgchat2)
+        entry2.delete(0, END)
+        server.send(msgchat.encode())
         
 #Buat halaman Main Menu
 class Main_Menu(Frame):
@@ -144,7 +171,9 @@ class CreateRoom_frame(Frame):
         label_name.pack(pady=10,padx=10)
 
         username = Entry(self)
-        username.pack(pady=15,padx=15)   
+        username.pack(pady=15,padx=15)
+        
+        
 
         b_create = Button(self, text="Create", command=lambda: controller.create_msg(Room_number.get(), username.get()))
         b_create.pack(pady=15, padx=15)
@@ -178,6 +207,7 @@ class EnterUserName_frame(Frame):
 
         username_input=Entry(self, text="masukan username")
         username_input.pack()
+        
 
         b_start = Button(self, text="Enter", command=lambda: controller.Uname_msg(username_input.get()))
         b_start.pack()
@@ -193,6 +223,22 @@ class PlayMode_frame(Frame):
          Frame.__init__(self, parent)
          label = Label(self, text="Ini chat room")
          label.pack(pady=10,padx=10)
+
+         scrollbar = Scrollbar(self)  # To navigate through past messages.
+         # Following will contain the messages.
+         msg_list = Listbox(self, height=15, width=50, yscrollcommand=scrollbar.set)
+         scrollbar.pack(side=RIGHT, fill=Y)
+         msg_list.pack(side=LEFT, fill=BOTH)
+         msg_list.pack()
+
+         messagechat = Entry(self)
+         messagechat.pack(pady=15,padx=15)
+
+         receive_thread = Thread(target=controller.receive(msg_list))
+         receive_thread.start()
+
+         send_button = Button(self, text="Send", command=lambda: controller.send(msg_list, messagechat, messagechat.get()))
+         send_button.pack()
         
         
 app = Window()
