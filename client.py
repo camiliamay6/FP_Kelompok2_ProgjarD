@@ -235,8 +235,14 @@ class PlayMode_frame(Frame):
          messagechat = Entry(self)
          messagechat.pack(pady=15,padx=15)
 
+         #t1 = threading.Thread(target=controller.receive, args=[msg_list])
+         #t1.start()
+         #t1.join()
+
          send_button = Button(self, text="Send", command=lambda: controller.send(msg_list, messagechat, messagechat.get()))
          send_button.pack()
+    
+    
 
          
         
