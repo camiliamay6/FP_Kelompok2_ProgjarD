@@ -116,6 +116,7 @@ def clientthread(conn, addr):
                 kiriman = message.split('////')[N-1] 
                 print(kiriman)
                 broadcast(kiriman,conn)
+                
                             
             #IF dipesannya ada kata username:
                 #cek ada dimana address ini

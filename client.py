@@ -4,6 +4,7 @@ import sys
 import msvcrt
 import string
 import random
+import threading
 #thread
 from threading import Thread
 #FTP
@@ -234,11 +235,10 @@ class PlayMode_frame(Frame):
          messagechat = Entry(self)
          messagechat.pack(pady=15,padx=15)
 
-         receive_thread = Thread(target=controller.receive(msg_list))
-         receive_thread.start()
-
          send_button = Button(self, text="Send", command=lambda: controller.send(msg_list, messagechat, messagechat.get()))
          send_button.pack()
+
+         
         
         
 app = Window()
