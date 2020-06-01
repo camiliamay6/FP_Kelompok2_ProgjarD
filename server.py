@@ -14,6 +14,7 @@ list_of_clients = []
 room_id = {}                #dict id room dengan conn playernya
 usernamelist= {}            #dict id room dengan usernamenya
 user_username = {}          #dict conn dengan usernamenya
+list_vote = {}          
 id_role_conn = []
 
 
@@ -44,8 +45,6 @@ def clientthread(conn, addr):
                 else:
                     print('gagal')
               
-              
-
             elif 'JOIN' in message:
                 N = 2
                 res = message.split(' ')[N-1] 
@@ -141,24 +140,37 @@ def clientthread(conn, addr):
                 for i in (pembagian*2, pembagian*3):
                     id_role_conn.append(room_key, people[i], '2')
                     mess = ":3"
-                    room_id[room_key][i].send(mess.encode()               
+                    room_id[room_key][i].send(mess.encode())               
                 
-                
+            # elif 'VOTE' in message:
+            #     username = message.split(' ')[1]
+            #     list_username = list(usernamelist.values())
+            #     print(list_username)
+            #     for room in usernamelist:
+            #         if username in 
+                    # if username in list_vote:
+                    #     print(username)
+                #         jumlah_vote = list_vote[username] + 1
+                #         list_vote.update({str(username):jumlah_vote})
+                #     else:
+                #         list_vote.update({str(username):1})
+                # print(list_vote)
             #kirim pesan dalam room
-             elif message:
-                 #cari username pengirim
-                 message_to_send = '<' + user_username[conn] + '>' + str(message)
-                 #cari id room pengirim
-                 key = list(room_id.keys())
-                 valuess = list(room_id.values())
-                 isi = range(len(valuess))
-                 for i in isi:
-                     if conn in valuess[i]:
-                        #dapet id room
+            elif "KIRIMCHAT" in message:
+                username = message.split(' ')[1]
+                chat = message.split(' ')[2]
+                #cari username pengirim
+                key = list(room_id.keys())
+                valuess = list(room_id.values())
+                isi = range(len(valuess))
+                for i in isi:
+                    if conn in valuess[i]:
+                    #dapet id room
                         room_key = key[i]
-                #kirim pesannya
-                 broadcast(message_to_send, conn, room_key)
-                 
+                message = str(username) + ': ' + str(chat)
+            #kirim pesannya
+                broadcast(message, conn, room_key)
+                
                                            
             #eliminasi 
 
@@ -175,7 +187,12 @@ def clientthread(conn, addr):
 
 def broadcast(message, connection, id_room):
     for clients in room_id[id_room]:
-        clients.send(message).encode()
+        if clients != connection:
+            try:
+                clients.send(message.encode())
+                print("berhasil ngirim")
+            except:
+                print("gagal ngirim")
 
 def remove(connection):
     if connection in list_of_clients:

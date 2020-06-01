@@ -123,16 +123,20 @@ class Window(Tk):
     # receive message dari server
     def receive(self, entry):
         while True:
-            try:
-                msg = server.recv(1024).decode()
-                print(str(msg))
-                entry.insert(END, msg)
-            except OSError:  # Possibly client has left the chat.
-                break
+            sockets_list=[server]
+            read_socket, write_socket, error_socket = select.select(sockets_list, [], [])
+
+            for socks in read_socket:
+                try:
+                    msg = server.recv(1024).decode()
+                    print(str(msg))
+                    entry.insert(END, msg)
+                except OSError:  # Possibly client has left the chat.
+                    break
 
     # send message ke chat
     def send(self,entry,entry2 , msg):
-        msgchat = "KIRIMCHAT"+"////" + namaclient + ": " + msg
+        msgchat = "KIRIMCHAT "+ namaclient + ' ' + msg
         msgchat2 = namaclient + ": " + msg
         print(msgchat)
         entry.insert(END, msgchat2)
@@ -235,9 +239,8 @@ class PlayMode_frame(Frame):
          messagechat = Entry(self)
          messagechat.pack(pady=15,padx=15)
 
-         #t1 = threading.Thread(target=controller.receive, args=[msg_list])
-         #t1.start()
-         #t1.join()
+         t1 = threading.Thread(target=controller.receive, args=[msg_list])
+         t1.start()
          
          
          #coba-coba
