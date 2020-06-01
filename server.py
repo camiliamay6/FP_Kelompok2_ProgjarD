@@ -18,8 +18,11 @@ user_username = {}          #dict conn dengan usernamenya
 list_vote = {}              #dict username dengan jumlah vote
 done_vote = []              #array username yang udah nge vote
 id_role_conn = []           #array isi id_room, conn, role(civ0, under1, white2), hidup/ngga
-the_word = [['ayam', 'bebek'], ['singa', "macan"]]
-
+the_word = [['ayam', 'bebek'], ['singa', 'macan'], 
+    ['turis','imigran'], ['kaca pembesar','mikroskop'],
+    ['kamera','mata'],['bola basket','sepak bola'],
+    ['laut','sungai'],['ikan','udang'], ['burung','angsa'],
+    ['kaca','cermin'],['semangka','melon'],['nasi','gandum']]
 
 array_conn = []
 LISTGROUP = []
