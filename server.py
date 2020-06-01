@@ -2,6 +2,7 @@ import socket
 import select
 import sys
 import threading
+import random 
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -15,7 +16,8 @@ room_id = {}                #dict id room dengan conn playernya
 usernamelist= {}            #dict id room dengan usernamenya
 user_username = {}          #dict conn dengan usernamenya
 list_vote = {}          
-id_role_conn = []
+id_role_conn = []           #array isi id_room, conn, role(civ0, under1, white2), hidup/ngga
+the_word = [['ayam', 'bebek'], ['singa', "macan"]]
 
 
 array_conn = []
@@ -116,6 +118,7 @@ def clientthread(conn, addr):
             #pembagian role
             elif 'MULAI' in message:
                 #cari id room pengirim
+                print("MULAI")
                 key = list(room_id.keys())
                 valuess = list(room_id.values())
                 isi = range(len(valuess))
@@ -125,22 +128,49 @@ def clientthread(conn, addr):
                         room_key = key[i]
                 #hitung banyak anggota dalam room
                 people = room_id[room_key]
-                pembagian = round(len(room_id[room_key]))/3
-                word = the_word[rand]
+                n_people = range(len(people))
+                #pembagian = round(len(room_id[room_key]))/3
+                #ambil random
+                print(people)                
+                word = random.choice(the_word)
+                print(word)
+                in_under = random.choice(people)
+                in_white = random.choice(people)
+                while in_white == in_under:
+                    in_white = random.choise(people)
+                for player in people:
+                    if player == in_under:
+                        und_mess = "SERVER: Undercover | " + word[1]
+                        player.send(und_mess.encode())
+                        print("uder sned")
+                       # id_role_conn.append([room_key, str(player), '1', 1])
+                    elif player == in_white:
+                        whi_mess = "SERVER :3"
+                        player.send(whi_mess.encode())
+                        print("player white")
+                      #  id_role_conn.append([room_key, str(player), '2', 1])
+                    else:                        
+                        civ_mess = "SERVER: Civilians | " + word[0]
+                        player.send(civ_mess.encode())
+                        print("player civi")
+                      #  id_role_conn.append([room_key, str(player), '0', 1])
+                print(id_role_conn)
+                
+                
                 #civilians
-                for i in range(pembagian):
-                    id_role_conn.append(room_key, people[i], '0')
-                    civ_mess = "civilian" + word[0]
-                    room_id[room_key][i].send(civ_mess.encode())
+                #for i in range(pembagian):
+#                    id_role_conn.append(room_key, people[i], '0')
+#                    civ_mess = "civilian" + word[0]
+#                    room_id[room_key][i].send(civ_mess.encode())
                 #civilians
-                for i in (pembagian, pembagian+pembagian):
-                    id_role_conn.append(room_key, people[i], '1')
-                    under_mess = "undercover" + word[1]
-                    room_id[room_key][i].send(under_mess.encode())
-                for i in (pembagian*2, pembagian*3):
-                    id_role_conn.append(room_key, people[i], '2')
-                    mess = ":3"
-                    room_id[room_key][i].send(mess.encode())               
+#                for i in (pembagian, pembagian+pembagian):
+#                    id_role_conn.append(room_key, people[i], '1')
+#                    under_mess = "undercover" + word[1]
+#                    room_id[room_key][i].send(under_mess.encode())
+#                for i in (pembagian*2, pembagian*3):
+#                    id_role_conn.append(room_key, people[i], '2')
+#                    mess = ":3"
+#                    room_id[room_key][i].send(mess.encode())               
                 
             # elif 'VOTE' in message:
             #     username = message.split(' ')[1]
