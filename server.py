@@ -157,8 +157,8 @@ def clientthread(conn, addr):
                 # print(list_vote)
             #kirim pesan dalam room
             elif "KIRIMCHAT" in message:
-                username = message.split(' ')[1]
-                chat = message.split(' ')[2]
+                username = message.split('/#/#/')[1]
+                chat = message.split('/#/#/')[2]
                 #cari username pengirim
                 key = list(room_id.keys())
                 valuess = list(room_id.values())

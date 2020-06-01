@@ -136,7 +136,7 @@ class Window(Tk):
 
     # send message ke chat
     def send(self,entry,entry2 , msg):
-        msgchat = "KIRIMCHAT "+ namaclient + ' ' + msg
+        msgchat = "KIRIMCHAT/#/#/"+ namaclient + '/#/#/' + msg
         msgchat2 = namaclient + ": " + msg
         print(msgchat)
         entry.insert(END, msgchat2)
