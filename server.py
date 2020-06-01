@@ -15,7 +15,8 @@ list_of_clients = []
 room_id = {}                #dict id room dengan conn playernya
 usernamelist= {}            #dict id room dengan usernamenya
 user_username = {}          #dict conn dengan usernamenya
-list_vote = {}          
+list_vote = {}              #dict username dengan jumlah vote
+done_vote = []              #array username yang udah nge vote
 id_role_conn = []           #array isi id_room, conn, role(civ0, under1, white2), hidup/ngga
 the_word = [['ayam', 'bebek'], ['singa', "macan"]]
 
@@ -197,7 +198,26 @@ def clientthread(conn, addr):
                     if conn in valuess[i]:
                     #dapet id room
                         room_key = key[i]
-                message = str(username) + ': ' + str(chat)
+                if "VOTE" in chat:
+                    if username in done_vote:
+                        print(done_vote)
+                        break
+                    else:
+                        voted = chat.split(' ')[1]
+                        list_username = list(usernamelist.values())
+                        print(list_username)
+                        for room in usernamelist:
+                            if voted in list_vote:
+                                jumlah_vote = list_vote[voted] + 1
+                                list_vote.update({str(voted):jumlah_vote})
+                            else:
+                                list_vote.update({str(voted):1})
+                        print(list_vote)
+                        done_vote.append(str(username))
+                        print(done_vote)
+                        message = "<" + str(username) + " sudah vote>"
+                else:
+                    message = str(username) + ': ' + str(chat)
             #kirim pesannya
                 broadcast(message, conn, room_key)
                 

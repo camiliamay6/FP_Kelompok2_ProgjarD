@@ -178,8 +178,6 @@ class CreateRoom_frame(Frame):
         username = Entry(self)
         username.pack(pady=15,padx=15)
         
-        
-
         b_create = Button(self, text="Create", command=lambda: controller.create_msg(Room_number.get(), username.get()))
         b_create.pack(pady=15, padx=15)
         
