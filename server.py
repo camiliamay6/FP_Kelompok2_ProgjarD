@@ -143,17 +143,17 @@ def clientthread(conn, addr):
                         und_mess = "SERVER: Undercover | " + word[1]
                         player.send(und_mess.encode())
                         print("uder sned")
-                       # id_role_conn.append([room_key, str(player), '1', 1])
+                        id_role_conn.append([room_key, str(player), '1', 1])
                     elif player == in_white:
                         whi_mess = "SERVER :3"
                         player.send(whi_mess.encode())
                         print("player white")
-                      #  id_role_conn.append([room_key, str(player), '2', 1])
+                        id_role_conn.append([room_key, str(player), '2', 1])
                     else:                        
                         civ_mess = "SERVER: Civilians | " + word[0]
                         player.send(civ_mess.encode())
                         print("player civi")
-                      #  id_role_conn.append([room_key, str(player), '0', 1])
+                        id_role_conn.append([room_key, str(player), '0', 1])
                 print(id_role_conn)
                 
                 
