@@ -126,8 +126,8 @@ def clientthread(conn, addr):
                         room_key = key[i]
                 #hitung banyak anggota dalam room
                 people = room_id[room_key]
-                pembagian = round(len(room_id[room_key]))/3
-                word = the_word[rand]
+                pembagian = (round(len(room_id[room_key]))/3)
+                word = the_word[0]
                 #civilians
                 for i in range(pembagian):
                     id_role_conn.append(room_key, people[i], '0')
@@ -141,11 +141,9 @@ def clientthread(conn, addr):
                 for i in (pembagian*2, pembagian*3):
                     id_role_conn.append(room_key, people[i], '2')
                     mess = ":3"
-                    room_id[room_key][i].send(mess.encode()               
-                
-                
-            #kirim pesan dalam room
-             elif message:
+                    room_id[room_key][i].send(mess.encode())
+                                    
+            else:
                  #cari username pengirim
                  message_to_send = '<' + user_username[conn] + '>' + str(message)
                  #cari id room pengirim
@@ -168,8 +166,7 @@ def clientthread(conn, addr):
                 # print (room_key)
 #                message_to_send = '<' + addr[0] + '>' + str(message)
 #                broadcast(message_to_send, conn)
-            else:
-                continue
+
         except:
             continue
 
