@@ -11,9 +11,11 @@ server.bind((ip_address,port))
 server.listen(100)
 list_of_clients = []
 
-room_id = {}                 #dict id room dengan conn playernya
-usernamelist= {}    #dict id room dengan usernamenya
+room_id = {}                #dict id room dengan conn playernya
+usernamelist= {}            #dict id room dengan usernamenya
 user_username = {}          #dict conn dengan usernamenya
+id_role_conn = []
+
 
 array_conn = []
 LISTGROUP = []
@@ -70,6 +72,7 @@ def clientthread(conn, addr):
                 print("MASOKKK")
                 N = 2
                 res = message.split(' ')[N-1] 
+                #buat array key dan nilainya
                 key = list(room_id.keys())
                 valuess = list(room_id.values())
                 # print(conn)
@@ -110,23 +113,54 @@ def clientthread(conn, addr):
                 else:
                     print("uname dah ada", addr)
                     conn.send("nah").encode()
-            
-            elif 'KIRIMCHAT' in message:
-                N = 2
-                kiriman = message.split('////')[N-1] 
-                print(kiriman)
-                broadcast(kiriman,conn)
+                    
+            #pembagian role
+            elif 'MULAI' in message:
+                #cari id room pengirim
+                key = list(room_id.keys())
+                valuess = list(room_id.values())
+                isi = range(len(valuess))
+                for i in isi:
+                    if conn in valuess[i]:
+                        #dapet id room
+                        room_key = key[i]
+                #hitung banyak anggota dalam room
+                people = room_id[room_key]
+                pembagian = round(len(room_id[room_key]))/3
+                word = the_word[rand]
+                #civilians
+                for i in range(pembagian):
+                    id_role_conn.append(room_key, people[i], '0')
+                    civ_mess = "civilian" + word[0]
+                    room_id[room_key][i].send(civ_mess.encode())
+                #civilians
+                for i in (pembagian, pembagian+pembagian):
+                    id_role_conn.append(room_key, people[i], '1')
+                    under_mess = "undercover" + word[1]
+                    room_id[room_key][i].send(under_mess.encode())
+                for i in (pembagian*2, pembagian*3):
+                    id_role_conn.append(room_key, people[i], '2')
+                    mess = ":3"
+                    room_id[room_key][i].send(mess.encode()               
                 
-                            
-            #IF dipesannya ada kata username:
-                #cek ada dimana address ini
-                #masukin ke matriks LISTGRUP nx4 (isinya room, address, username, role)
                 
-            #kalau pesan ada kata "SEBUT ":??
-                #kalau belum ada:
-                    #append ke dir kata['id_room']
-                #kalau ada :
-                    #send ke id room kalau kata udah ada
+            #kirim pesan dalam room
+             elif message:
+                 #cari username pengirim
+                 message_to_send = '<' + user_username[conn] + '>' + str(message)
+                 #cari id room pengirim
+                 key = list(room_id.keys())
+                 valuess = list(room_id.values())
+                 isi = range(len(valuess))
+                 for i in isi:
+                     if conn in valuess[i]:
+                        #dapet id room
+                        room_key = key[i]
+                #kirim pesannya
+                 broadcast(message_to_send, conn, room_key)
+                 
+                                           
+            #eliminasi 
 
 #            if message:
                 # print('<'+addr[0]+'>' + str(message))
@@ -139,8 +173,8 @@ def clientthread(conn, addr):
         except:
             continue
 
-def broadcast(message, connection):
-    for clients in list_of_clients:
+def broadcast(message, connection, id_room):
+    for clients in room_id[id_room]:
         clients.send(message).encode()
 
 def remove(connection):

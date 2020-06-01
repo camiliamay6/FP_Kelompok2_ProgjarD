@@ -238,38 +238,38 @@ class PlayMode_frame(Frame):
          #t1 = threading.Thread(target=controller.receive, args=[msg_list])
          #t1.start()
          #t1.join()
+         
+         
+         #coba-coba
+         #while True:
+             #    sockets_list = [server]
+             #    read_socket = select.select(sockets_list, [],[], 3)[0]
+             
+             #    if msvcrt.kbhit():
+                 #        read_socket.append(sys.stdin)
+                 
+                 #   for socks in read_socket:
+                     #        if socks == server:
+                         #            message = socks.recv(2048).decode()
+                         #            sys.stdout.write(message)
+                         
+                         #           
+        #       else:
+                    #message = sys.stdin.readline()
+                    #server.send(message.encode())
+                    #sys.stdout.write('<You>')
+                    #sys.stdout.write(message)
+                    #sys.stdout.flush()
 
          send_button = Button(self, text="Send", command=lambda: controller.send(msg_list, messagechat, messagechat.get()))
          send_button.pack()
-    
-    
-
-         
         
         
 app = Window()
 app.geometry("500x500")
 app.mainloop()
 
-#while True:
-#    sockets_list = [server]
-#    read_socket = select.select(sockets_list, [],[], 3)[0]
-    
-#    if msvcrt.kbhit():
-#        read_socket.append(sys.stdin)
-    
- #   for socks in read_socket:
-#        if socks == server:
-#            message = socks.recv(2048).decode()
-#            sys.stdout.write(message)
-                 
- #           
- #       else:
- #           message = sys.stdin.readline()
- #           server.send(message.encode())
- #           sys.stdout.write('<You>')
-#            sys.stdout.write(message)
-#            sys.stdout.flush()
+
             
 server.close()
             
