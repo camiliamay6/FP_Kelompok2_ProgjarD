@@ -155,18 +155,17 @@ class Window(Tk):
     # menunggu master room play game
     def wait(self, pesan):
         while True:
-            sockets_list=[server]
-            read_socket, write_socket, error_socket = select.select(sockets_list, [], [])
-
-            for socks in read_socket:
-                try:
-                    msg = server.recv(1024).decode()
-                    print(msg)
-                    if msg == "MULAI":
-                        frame = self.frames[PlayMode_frame]
-                        frame.tkraise()
-                except OSError:  # Possibly client has left the chat.
+            try:
+                msg = server.recv(1024).decode()
+                print(msg)
+                if msg == "MULAI":
+                    pesan = "MULAI"
                     break
+            except OSError:  # Possibly client has left the chat.
+                break
+        if pesan == "MULAI":
+            frame = self.frames[PlayMode_frame]
+            frame.tkraise()
         
 #Buat halaman Main Menu
 class Main_Menu(Frame):
