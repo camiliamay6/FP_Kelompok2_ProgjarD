@@ -58,8 +58,8 @@ class Window(Tk):
         print(message)
         if message == 'berhasil':
             print('berhasil')
-            # frame = self.frames[PlayMode_frame]
-            frame = self.frames[WaitRoomMaster_frame]
+            frame = self.frames[PlayMode_frame]
+            # frame = self.frames[WaitRoomMaster_frame]
             frame.tkraise()
         else: 
             frame = self.frames[NotFound_frame]
@@ -102,8 +102,8 @@ class Window(Tk):
         print("ngirim ke server...")
         message = server.recv(1024).decode()
         if message == 'berhasil':
-            # frame = self.frames[PlayMode_frame]
-            frame = self.frames[WaitRoom_frame]
+            frame = self.frames[PlayMode_frame]
+            # frame = self.frames[WaitRoom_frame]
             frame.tkraise()
         else:
             frame = self.frames[NotFound_frame]
@@ -260,8 +260,8 @@ class WaitRoom_frame(Frame):
         Frame.__init__(self, parent)
         label = Label(self, text="Menunggu")
         label.pack(pady=10,padx=10)
-        t2 = threading.Thread(target=controller.wait, args=["Menunggu"])
-        t2.start()
+        # t2 = threading.Thread(target=controller.wait, args=["Menunggu"])
+        # t2.start()
 
 class PlayMode_frame(Frame):
     def __init__(self, parent, controller):
