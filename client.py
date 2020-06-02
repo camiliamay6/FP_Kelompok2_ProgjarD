@@ -1,7 +1,7 @@
 import socket
 import select
 import sys
-import msvcrt
+# import msvcrt
 import string
 import random
 import threading
@@ -36,7 +36,7 @@ class Window(Tk):
 
         self.frames = {}
         #setiap kelas frame masukin ke dalam kurung sini ya
-        for F in (CreateRoom_frame, JoinRoom_frame, Main_Menu, EnterUserName_frame, NotFound_frame, PlayMode_frame):
+        for F in (CreateRoom_frame, JoinRoom_frame, Main_Menu, EnterUserName_frame, NotFound_frame, WaitRoomMaster_frame, WaitRoom_frame, PlayMode_frame):
             frame = F(container, self)
             self.frames[F]=frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -58,7 +58,8 @@ class Window(Tk):
         print(message)
         if message == 'berhasil':
             print('berhasil')
-            frame = self.frames[PlayMode_frame]
+            # frame = self.frames[PlayMode_frame]
+            frame = self.frames[WaitRoomMaster_frame]
             frame.tkraise()
         else: 
             frame = self.frames[NotFound_frame]
@@ -79,7 +80,6 @@ class Window(Tk):
     def Join_msg(self, konten):
         #dari entry ambil valuenya
         join_id = "JOIN " + konten
-        
         print(konten)
         server.send(join_id.encode())
         message = server.recv(1024).decode()
@@ -102,7 +102,8 @@ class Window(Tk):
         print("ngirim ke server...")
         message = server.recv(1024).decode()
         if message == 'berhasil':
-            frame = self.frames[PlayMode_frame]
+            # frame = self.frames[PlayMode_frame]
+            frame = self.frames[WaitRoom_frame]
             frame.tkraise()
         else:
             frame = self.frames[NotFound_frame]
@@ -119,6 +120,7 @@ class Window(Tk):
     def generateKode(self, entry): 
         password1 = self.randomKey(entry) 
         entry.insert(10, password1) 
+        id_room = password1
     
     # receive message dari server
     def receive(self, entry):
@@ -142,6 +144,29 @@ class Window(Tk):
         entry.insert(END, msgchat2)
         entry2.delete(0, END)
         server.send(msgchat.encode())
+
+    # master room play game
+    def play(self):
+        msg = "MULAI"
+        server.send(msg.encode())
+        frame = self.frames[PlayMode_frame]
+        frame.tkraise()
+
+    # menunggu master room play game
+    def wait(self, pesan):
+        while True:
+            sockets_list=[server]
+            read_socket, write_socket, error_socket = select.select(sockets_list, [], [])
+
+            for socks in read_socket:
+                try:
+                    msg = server.recv(1024).decode()
+                    print(msg)
+                    if msg == "MULAI":
+                        frame = self.frames[PlayMode_frame]
+                        frame.tkraise()
+                except OSError:  # Possibly client has left the chat.
+                    break
         
 #Buat halaman Main Menu
 class Main_Menu(Frame):
@@ -221,49 +246,67 @@ class NotFound_frame(Frame):
         label = Label(self, text="Room Tidak Ditemukan :(")
         label.pack(pady=20,padx=20)
 
+# menu wait room untuk master room
+class WaitRoomMaster_frame(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+        # label = Label(self, text="MULAI")
+        # label.pack(pady=10,padx=10)
+        play_button = Button(self, text="Mulai", command=lambda: controller.play())
+        play_button.pack()
+
+# menu wait room untuk selain master room
+class WaitRoom_frame(Frame):
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+        label = Label(self, text="Menunggu")
+        label.pack(pady=10,padx=10)
+        t2 = threading.Thread(target=controller.wait, args=["Menunggu"])
+        t2.start()
+
 class PlayMode_frame(Frame):
-     def __init__(self, parent, controller):
-         Frame.__init__(self, parent)
-         label = Label(self, text="Ini chat room")
-         label.pack(pady=10,padx=10)
+    def __init__(self, parent, controller):
+        Frame.__init__(self, parent)
+        label = Label(self, text="Ini chat room")
+        label.pack(pady=10,padx=10)
 
-         scrollbar = Scrollbar(self)  # To navigate through past messages.
-         # Following will contain the messages.
-         msg_list = Listbox(self, height=15, width=50, yscrollcommand=scrollbar.set)
-         scrollbar.pack(side=RIGHT, fill=Y)
-         msg_list.pack(side=LEFT, fill=BOTH)
-         msg_list.pack()
+        scrollbar = Scrollbar(self)  # To navigate through past messages.
+        # Following will contain the messages.
+        msg_list = Listbox(self, height=15, width=50, yscrollcommand=scrollbar.set)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        msg_list.pack(side=LEFT, fill=BOTH)
+        msg_list.pack()
 
-         messagechat = Entry(self)
-         messagechat.pack(pady=15,padx=15)
+        messagechat = Entry(self)
+        messagechat.pack(pady=15,padx=15)
 
-         t1 = threading.Thread(target=controller.receive, args=[msg_list])
-         t1.start()
-         
-         
-         #coba-coba
-         #while True:
-             #    sockets_list = [server]
-             #    read_socket = select.select(sockets_list, [],[], 3)[0]
-             
-             #    if msvcrt.kbhit():
-                 #        read_socket.append(sys.stdin)
-                 
-                 #   for socks in read_socket:
-                     #        if socks == server:
-                         #            message = socks.recv(2048).decode()
-                         #            sys.stdout.write(message)
-                         
-                         #           
-        #       else:
-                    #message = sys.stdin.readline()
-                    #server.send(message.encode())
-                    #sys.stdout.write('<You>')
-                    #sys.stdout.write(message)
-                    #sys.stdout.flush()
+        t1 = threading.Thread(target=controller.receive, args=[msg_list])
+        t1.start()
+        
+        
+        #coba-coba
+        #while True:
+            #    sockets_list = [server]
+            #    read_socket = select.select(sockets_list, [],[], 3)[0]
+            
+            #    if msvcrt.kbhit():
+                #        read_socket.append(sys.stdin)
+                
+                #   for socks in read_socket:
+                    #        if socks == server:
+                        #            message = socks.recv(2048).decode()
+                        #            sys.stdout.write(message)
+                        
+                        #           
+    #       else:
+                #message = sys.stdin.readline()
+                #server.send(message.encode())
+                #sys.stdout.write('<You>')
+                #sys.stdout.write(message)
+                #sys.stdout.flush()
 
-         send_button = Button(self, text="Send", command=lambda: controller.send(msg_list, messagechat, messagechat.get()))
-         send_button.pack()
+        send_button = Button(self, text="Send", command=lambda: controller.send(msg_list, messagechat, messagechat.get()))
+        send_button.pack()
         
         
 app = Window()

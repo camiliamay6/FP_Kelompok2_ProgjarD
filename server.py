@@ -122,7 +122,16 @@ def clientthread(conn, addr):
             #pembagian role
             elif 'MULAI' in message:
                 #cari id room pengirim
-                print("MULAI")
+                # print("MULAI")
+                for clients in list_of_clients:
+                    try:
+                        print("MULAI")
+                        msg = "MULAI"
+                        clients.send(msg.encode())
+                    except:
+                        clients.close()
+                        print("gagal mengirim")
+                        remove(clients)
                 key = list(room_id.keys())
                 valuess = list(room_id.values())
                 isi = range(len(valuess))
